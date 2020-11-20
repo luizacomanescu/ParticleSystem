@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include "BlackHole.hpp"
 
 typedef struct Particle {
     float xColour = 99.0;
@@ -19,12 +20,21 @@ typedef struct Particle {
     float xPos;
     float yPos;
     float zPos;
+    
+    float initX;
+    float initY;
+    
+    
     float radius;
+    float smallRadius = -10;
     
     float xVel;
     float yVel;
     
     float mass;
+    bool hasReachedBlackHole = false;
+    BlackHoles blackhole = BlackHoles();
+    float rotationAngle = 0;
 } Particle;
 
 extern std::vector<Particle> particleSystem;

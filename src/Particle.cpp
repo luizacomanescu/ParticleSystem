@@ -26,13 +26,32 @@ vector<Particle> particleSystem;
 
 void emitter(void)
 {
-    for (int i = 0 ; i < MAX_PARTICLES ; i++) {
+    for (int asteroidIndex = 0 ; asteroidIndex < MAX_PARTICLES ; asteroidIndex++) {
         particleSystem.push_back(Particle());
-        particleSystem[i].xPos = 0.0;
-        particleSystem[i].yPos = random(- SCREEN_HEIGHT, 0);
-        particleSystem[i].zPos = random(- SCREEN_WIDTH / 10, 0);
-        particleSystem[i].radius = random(9.0, 23.0);
-        particleSystem[i].mass = -0.3 + heaviness * drand48();
+        particleSystem[asteroidIndex].xPos = 0.0;
+        particleSystem[asteroidIndex].yPos = random(- SCREEN_HEIGHT, 0);
+        particleSystem[asteroidIndex].zPos = random(- SCREEN_WIDTH / 10, 0);
+        particleSystem[asteroidIndex].radius = random(9.0, 23.0);
+        particleSystem[asteroidIndex].mass = -0.3 + heaviness * drand48();
+        
+        int minimumDistance = INT_MAX;
+        for(int blackHoleIndex = 0; blackHoleIndex < blackholes.size(); blackHoleIndex++)
+        {
+            if(particleSystem[asteroidIndex].radius * 3 >= blackholes[blackHoleIndex].radius)
+            {
+                continue;
+            }
+            else
+            {
+                float distance = sqrt(pow(particleSystem[asteroidIndex].xPos - blackholes[blackHoleIndex].x,2) + pow(particleSystem[asteroidIndex].yPos - blackholes[blackHoleIndex].y,2));
+                
+                if(distance < minimumDistance) {
+                    minimumDistance = distance;
+                    particleSystem[asteroidIndex].blackhole = blackholes[blackHoleIndex];
+                }
+            }
+        }
+        
     }
 }
 
