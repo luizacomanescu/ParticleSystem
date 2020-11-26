@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <vector>
 #include "BlackHole.hpp"
+#define MAX_PARTICLES 4
 
 typedef struct Particle {
     float xColour = 99.0;
@@ -33,11 +34,15 @@ typedef struct Particle {
     
     float mass;
     bool hasReachedBlackHole = false;
+    bool life = true;
     BlackHoles blackhole = BlackHoles();
-    float rotationAngle = 0;
+    float rotationAngle = -0.1;
+    
+    bool turbulance = false;
 } Particle;
 
 extern std::vector<Particle> particleSystem;
 extern void emitter();
+extern bool checkCollison(int index);
 
 #endif /* Particle_hpp */

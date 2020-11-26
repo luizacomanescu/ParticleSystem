@@ -10,13 +10,14 @@
 #include <cstdlib>
 #include <vector>
 #include "ofApp.h"
-#define MAX_PARTICLES 10
+#include <iostream>
+
 
 using namespace std;
 
 
 int newAsteroids;
-int noAsteroids;
+int noAsteroids = 2;
 int intensity = 30;
 float heaviness = -10.0;
 
@@ -26,18 +27,31 @@ vector<Particle> particleSystem;
 
 void emitter(void)
 {
-    for (int asteroidIndex = 0 ; asteroidIndex < MAX_PARTICLES ; asteroidIndex++) {
+    for (int asteroidIndex = particleSystem.size() - 1; asteroidIndex < noAsteroids ; asteroidIndex++) {
+            
         particleSystem.push_back(Particle());
-        particleSystem[asteroidIndex].xPos = 0.0;
+        particleSystem[asteroidIndex].xPos = random(- SCREEN_WIDTH,200.0);
         particleSystem[asteroidIndex].yPos = random(- SCREEN_HEIGHT, 0);
         particleSystem[asteroidIndex].zPos = random(- SCREEN_WIDTH / 10, 0);
-        particleSystem[asteroidIndex].radius = random(9.0, 23.0);
-        particleSystem[asteroidIndex].mass = -0.3 + heaviness * drand48();
+        particleSystem[asteroidIndex].radius = random(7.0, 19.0);
+        particleSystem[asteroidIndex].mass = - particleSystem[asteroidIndex].radius;
         
+        
+        
+//        cout << particleSystem[asteroidIndex].radius << endl;
+        cout <<  particleSystem[asteroidIndex].mass << endl;
+//        
+//        cout << endl;
+        
+        if(particleSystem[0].turbulance)
+            particleSystem[asteroidIndex].turbulance = true;
+        
+       // cout << particleSystem[asteroidIndex].mass << endl;
+                
         int minimumDistance = INT_MAX;
         for(int blackHoleIndex = 0; blackHoleIndex < blackholes.size(); blackHoleIndex++)
         {
-            if(particleSystem[asteroidIndex].radius * 3 >= blackholes[blackHoleIndex].radius)
+            if(particleSystem[asteroidIndex].radius * 2 >= blackholes[blackHoleIndex].radius)
             {
                 continue;
             }
@@ -52,7 +66,11 @@ void emitter(void)
             }
         }
         
+        particleSystem[asteroidIndex].initX = particleSystem[asteroidIndex].blackhole.x;
+        particleSystem[asteroidIndex].initY = particleSystem[asteroidIndex].blackhole.y;
+        
     }
+    noAsteroids += particleSystem.size();
 }
 
 int random(int min, int max)

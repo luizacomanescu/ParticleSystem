@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-#define FRAME_RATE 60
+#define FRAME_RATE 30
 #define MIN_BH 3
 #define MAX_BH 9
 
