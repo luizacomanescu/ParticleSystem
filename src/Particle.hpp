@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <vector>
 #include "BlackHole.hpp"
-#define MAX_PARTICLES 4
+#define MAX_PARTICLES 100000
 
 typedef struct Particle {
     float xColour = 99.0;
@@ -21,6 +21,10 @@ typedef struct Particle {
     float xPos;
     float yPos;
     float zPos;
+    
+    float xScale;
+    float yScale;
+    float zScale;
     
     float initX;
     float initY;

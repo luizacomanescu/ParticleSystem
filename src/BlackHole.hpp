@@ -16,6 +16,8 @@ typedef struct BlackHoles {
     float y;
     float radius;
     float mass;
+    
+    float resy;
 } BlackHoles;
 
 extern std::vector<BlackHoles> blackholes;

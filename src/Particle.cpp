@@ -17,7 +17,7 @@ using namespace std;
 
 
 int newAsteroids;
-int noAsteroids = 2;
+int noAsteroids = 300;
 int intensity = 30;
 float heaviness = -10.0;
 
@@ -27,12 +27,15 @@ vector<Particle> particleSystem;
 
 void emitter(void)
 {
-    for (int asteroidIndex = particleSystem.size() - 1; asteroidIndex < noAsteroids ; asteroidIndex++) {
+    for (int asteroidIndex = particleSystem.size(); asteroidIndex < noAsteroids ; asteroidIndex++) {
             
         particleSystem.push_back(Particle());
-        particleSystem[asteroidIndex].xPos = random(- SCREEN_WIDTH,200.0);
-        particleSystem[asteroidIndex].yPos = random(- SCREEN_HEIGHT, 0);
-        particleSystem[asteroidIndex].zPos = random(- SCREEN_WIDTH / 10, 0) - 20;
+        particleSystem[asteroidIndex].xPos = random(-1000.0,1000.0);
+        particleSystem[asteroidIndex].yPos = random(- 900, 0);
+        particleSystem[asteroidIndex].zPos = random(- 1000 / 10, 0) - 20;
+        particleSystem[asteroidIndex].xScale = 0.07 * drand48();
+        particleSystem[asteroidIndex].yScale = 0.07 * drand48();
+        particleSystem[asteroidIndex].zScale = 0.07 * drand48();
         particleSystem[asteroidIndex].radius = random(7.0, 19.0);
         particleSystem[asteroidIndex].mass = - particleSystem[asteroidIndex].radius;
         
@@ -61,7 +64,8 @@ void emitter(void)
         particleSystem[asteroidIndex].initY = particleSystem[asteroidIndex].blackhole.y;
         
     }
-    noAsteroids += particleSystem.size();
+    
+   // noAsteroids += particleSystem.size();
 }
 
 int random(int min, int max)

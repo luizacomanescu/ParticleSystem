@@ -13,13 +13,23 @@ void ofApp::setup(){
     ofEnableDepthTest();
     ofSetVerticalSync(true);
     
-    //cam.setDistance(1500);
+    ofSetCircleResolution(50);
+    
     cam.setGlobalPosition(519.218, 972.452, -240.295);
     cam.setGlobalOrientation(glm::quat(0.627076, -0.777579, -0.0290952, -0.0360783));
     
     ofSetWindowShape( SCREEN_WIDTH, SCREEN_HEIGHT );
     ofSetFrameRate( FRAME_RATE );
-    ofBackground( ofColor::white );
+    ofBackground(ofColor::black);
+    
+    ofDisableArbTex();
+    ofLoadImage(particleTex,"/Users/luizacomanescu/Downloads/13302-2.jpg");
+    
+    blackholeShader.load("shadersGL3/blackhole");
+    vortexShader.load("shadersGL3/vortex");
+    
+    
+    
     evokeBlackHoles();
     emitter();
 }
@@ -113,7 +123,7 @@ void ofApp::update(){
                 }
             }
                 
-            continue;
+                continue;
         }
         
         if(collisionOccurred) {
@@ -146,37 +156,44 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     cam.begin();
-    cout << cam.getGlobalOrientation() << endl;
-    cout << cam.getX() << " " << cam.getY() << " " << cam.getZ() << " " << cam.getFov() << endl;
     
     ofTranslate(SCREEN_WIDTH, SCREEN_HEIGHT);
-    ofSetColor(12,67,9,23);
+  
     
     /**
                     Vortex
      */
+    vortexShader.begin();
+    vortexShader.setUniform1f("u_time", ofGetElapsedTimef() * 0.1);
+    vortexShader.setUniform1f("radius", vortex.radius);
+    vortexShader.setUniform2f("u_resolution", 200, ofGetHeight() - 500);
     ofDrawCircle(vortex.x, vortex.y, vortex.radius);
-    
+    vortexShader.end();
     
     /**
                     Blackholes
      */
     for(int blackHoleIndex = 0; blackHoleIndex < blackholes.size(); blackHoleIndex++) {
-        ofSetColor(0,0,0);
-//        ofDrawCircle(blackholes[blackHoleIndex].x,  blackholes[blackHoleIndex].y, blackholes[blackHoleIndex].radius);
-        
-        ofDrawCircle(blackholes[blackHoleIndex].x, blackholes[blackHoleIndex].y, -20.0, blackholes[blackHoleIndex].radius);
+        blackholeShader.begin();
+        blackholeShader.setUniform1f("u_time", ofGetElapsedTimef());
+        blackholeShader.setUniform1f("radius",400);
+        blackholeShader.setUniform2f("u_resolution", ofGetWidth() -  abs(blackholes[blackHoleIndex].x), blackholes[blackHoleIndex].resy);
+       ofDrawCircle(blackholes[blackHoleIndex].x, blackholes[blackHoleIndex].y, -20.0, blackholes[blackHoleIndex].radius);
+       blackholeShader.end();
     }
+   
     
     /**
                     Asteroids
      */
     for(int asteroidIndex = 0; asteroidIndex < particleSystem.size(); asteroidIndex ++) {
-        ofSetColor(particleSystem[asteroidIndex].xColour, particleSystem[asteroidIndex].yColour, particleSystem[asteroidIndex].zColour);
+        ofSetColor(ofColor::lightGrey);
         ofFill();
+        particleTex.bind();
         ofDrawSphere(particleSystem[asteroidIndex].xPos, particleSystem[asteroidIndex].yPos, particleSystem[asteroidIndex].zPos, particleSystem[asteroidIndex].radius);
     }
     
+    particleTex.unbind();
     cam.end();
 }
 
@@ -193,6 +210,10 @@ void ofApp::keyPressed(int key){
     
     if(key == 57) { //9
         collision = true;
+    }
+    
+    if(key == 48) { //0
+        collision = false;
     }
     
     if(key == 50) { //2

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxAssimpModelLoader.h"
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define FRAME_RATE 30
@@ -27,5 +28,9 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     ofEasyCam cam;
-		
+    ofxAssimpModelLoader model;
+    ofTexture particleTex;
+    
+    ofShader blackholeShader;
+    ofShader vortexShader;
 };

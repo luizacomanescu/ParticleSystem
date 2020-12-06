@@ -17,7 +17,7 @@ typedef struct Vortex {
     float x = - 100;
     float y = - 300;
     float radius = 300;
-    float speed = 10.5;
+    float speed = 15.5;
     float velx;
     float vely;
     float scale = 10;
