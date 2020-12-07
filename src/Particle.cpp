@@ -6,6 +6,7 @@
 //
 
 #include "Particle.hpp"
+#include "ofxGui.h"
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -17,7 +18,7 @@ using namespace std;
 
 
 int newAsteroids;
-int noAsteroids = 300;
+int noAsteroids = 30;
 int intensity = 30;
 float heaviness = -10.0;
 
@@ -25,9 +26,9 @@ int random(int min, int max);
 
 vector<Particle> particleSystem;
 
-void emitter(void)
+void emitter()
 {
-    for (int asteroidIndex = particleSystem.size(); asteroidIndex < noAsteroids ; asteroidIndex++) {
+    for (int asteroidIndex = particleSystem.size(); asteroidIndex < noAsteroids; asteroidIndex++) {
             
         particleSystem.push_back(Particle());
         particleSystem[asteroidIndex].xPos = random(-1000.0,1000.0);
@@ -38,9 +39,6 @@ void emitter(void)
         particleSystem[asteroidIndex].zScale = 0.07 * drand48();
         particleSystem[asteroidIndex].radius = random(7.0, 19.0);
         particleSystem[asteroidIndex].mass = - particleSystem[asteroidIndex].radius;
-        
-        if(particleSystem[0].turbulance)
-            particleSystem[asteroidIndex].turbulance = true;
                 
         int minimumDistance = INT_MAX;
         for(int blackHoleIndex = 0; blackHoleIndex < blackholes.size(); blackHoleIndex++)
@@ -64,8 +62,6 @@ void emitter(void)
         particleSystem[asteroidIndex].initY = particleSystem[asteroidIndex].blackhole.y;
         
     }
-    
-   // noAsteroids += particleSystem.size();
 }
 
 int random(int min, int max)

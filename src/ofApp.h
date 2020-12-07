@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxAssimpModelLoader.h"
+#include "ofxGui.h"
+#include "Particle.hpp"
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define FRAME_RATE 30
@@ -28,9 +30,18 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     ofEasyCam cam;
-    ofxAssimpModelLoader model;
+  
     ofTexture particleTex;
     
     ofShader blackholeShader;
     ofShader vortexShader;
+    
+    
+    ofxPanel gui;
+    ofxFloatSlider gravity;
+    ofxFloatField noOfAsteroids;
+    ofxFloatSlider collisionIntensity;
+    ofxToggle collisionToggle;
+    ofxToggle turbulenceToggle;
+    
 };

@@ -4,23 +4,27 @@
 #include "Vortex.hpp"
 #include <math.h>
 
-float gravity = 0.006;
-bool turbulance = false;
-bool collision = false;
-
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofEnableDepthTest();
+    
     ofSetVerticalSync(true);
     
-    ofSetCircleResolution(50);
+    gui.setup();
+    gui.add(gravity.setup("gravity", 0.1, 0.1, 3.1));
+    gui.add(noOfAsteroids.setup("asteroids", 100, 0, MAX_PARTICLES));
+    gui.add(collisionIntensity.setup("intensity", 0.001, 0.001, 2));
+    gui.add(collisionToggle.setup("collision", false));
+    gui.add(turbulenceToggle.setup("turbulence", false));
     
+    noAsteroids += noOfAsteroids;
+    
+    ofSetCircleResolution(50);
+   
     cam.setGlobalPosition(519.218, 972.452, -240.295);
     cam.setGlobalOrientation(glm::quat(0.627076, -0.777579, -0.0290952, -0.0360783));
     
     ofSetWindowShape( SCREEN_WIDTH, SCREEN_HEIGHT );
     ofSetFrameRate( FRAME_RATE );
-    ofBackground(ofColor::black);
     
     ofDisableArbTex();
     ofLoadImage(particleTex,"/Users/luizacomanescu/Downloads/13302-2.jpg");
@@ -28,19 +32,18 @@ void ofApp::setup(){
     blackholeShader.load("shadersGL3/blackhole");
     vortexShader.load("shadersGL3/vortex");
     
-    
-    
     evokeBlackHoles();
     emitter();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    noAsteroids = noOfAsteroids;
     for(int asteroidIndex = 0; asteroidIndex < particleSystem.size(); asteroidIndex ++)
     {
-
+        
         bool collisionOccurred = false;
-        if(collision) {
+        if(collisionToggle) {
             for(int collisionIndex = 0; collisionIndex < asteroidIndex; collisionIndex ++) {
 
                 float distance = sqrt(pow(particleSystem[asteroidIndex].xPos - particleSystem[collisionIndex].xPos,2) + pow(particleSystem[asteroidIndex].yPos - particleSystem[collisionIndex].yPos,2));
@@ -49,11 +52,11 @@ void ofApp::update(){
 
                 if(distance + 1 <= restLength) {
                     collisionOccurred = true;
-                    float force = (distance - restLength) / (distance * (particleSystem[asteroidIndex].mass + particleSystem[collisionIndex].mass));
+                    float force = (distance - restLength) / (distance * (particleSystem[asteroidIndex].mass + particleSystem[collisionIndex].mass)) * collisionIntensity;
 
-                    particleSystem[asteroidIndex].xVel += 0.01 * distance * force * particleSystem[asteroidIndex].mass;
+                    particleSystem[asteroidIndex].xVel += distance * force * particleSystem[asteroidIndex].mass;
 
-                    particleSystem[collisionIndex].xVel += 0.01 * distance * force * -particleSystem[collisionIndex].mass;
+                    particleSystem[collisionIndex].xVel += distance * force * -particleSystem[collisionIndex].mass;
 
                     break;
                 }
@@ -91,7 +94,7 @@ void ofApp::update(){
         /**
                             Vortex terror
          */
-        if(particleSystem[asteroidIndex].turbulance) {
+        if(turbulenceToggle) {
             
             float dx = particleSystem[asteroidIndex].xPos-vortex.x;
             float dy = particleSystem[asteroidIndex].yPos-vortex.y;
@@ -131,7 +134,7 @@ void ofApp::update(){
             particleSystem[asteroidIndex].yPos += particleSystem[asteroidIndex].xVel;
             continue;
         }
-        particleSystem[asteroidIndex].xVel += gravity * particleSystem[asteroidIndex].mass * particleSystem[asteroidIndex].blackhole.mass / distance;
+        particleSystem[asteroidIndex].xVel += gravity * particleSystem[asteroidIndex].mass * particleSystem[asteroidIndex].blackhole.mass / pow(distance,2);
         
         if(particleSystem[asteroidIndex].blackhole.x > particleSystem[asteroidIndex].xPos){
             particleSystem[asteroidIndex].xPos += particleSystem[asteroidIndex].xVel;
@@ -151,14 +154,19 @@ void ofApp::update(){
     
     if(particleSystem.size() < MAX_PARTICLES)
         emitter();
+    
+    cout << "Last frame time: " << ofGetLastFrameTime() << endl;
+    cout << "Number of asteroids: " << particleSystem.size() << endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    
+    ofBackgroundGradient(ofColor::grey, ofColor::black);
+
     cam.begin();
     
     ofTranslate(SCREEN_WIDTH, SCREEN_HEIGHT);
-  
     
     /**
                     Vortex
@@ -179,8 +187,8 @@ void ofApp::draw(){
         blackholeShader.setUniform1f("radius",400);
         blackholeShader.setUniform2f("u_resolution", ofGetWidth() -  abs(blackholes[blackHoleIndex].x), blackholes[blackHoleIndex].resy);
        ofDrawCircle(blackholes[blackHoleIndex].x, blackholes[blackHoleIndex].y, -20.0, blackholes[blackHoleIndex].radius);
-       blackholeShader.end();
     }
+    blackholeShader.end();
    
     
     /**
@@ -188,41 +196,18 @@ void ofApp::draw(){
      */
     for(int asteroidIndex = 0; asteroidIndex < particleSystem.size(); asteroidIndex ++) {
         ofSetColor(ofColor::lightGrey);
-        ofFill();
         particleTex.bind();
         ofDrawSphere(particleSystem[asteroidIndex].xPos, particleSystem[asteroidIndex].yPos, particleSystem[asteroidIndex].zPos, particleSystem[asteroidIndex].radius);
     }
-    
     particleTex.unbind();
+    
     cam.end();
+    
+    gui.draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == 55) { //7
-        for(int asteroidIndex = 0; asteroidIndex < particleSystem.size(); asteroidIndex ++)
-        particleSystem[asteroidIndex].turbulance = true;
-    }
-    if(key == 56) { //8
-        for(int asteroidIndex = 0; asteroidIndex < particleSystem.size(); asteroidIndex ++)
-        particleSystem[asteroidIndex].turbulance = false;
-    }
-    
-    if(key == 57) { //9
-        collision = true;
-    }
-    
-    if(key == 48) { //0
-        collision = false;
-    }
-    
-    if(key == 50) { //2
-        gravity += 0.001;
-    }
-    else if(key == 51) { //3
-        gravity -= 0.001;
-    }
-    
 }
 
 //--------------------------------------------------------------

@@ -11,7 +11,9 @@
 #include <stdio.h>
 #include <vector>
 #include "BlackHole.hpp"
-#define MAX_PARTICLES 100000
+#include "ofApp.h"
+
+#define MAX_PARTICLES 1000000
 
 typedef struct Particle {
     float xColour = 99.0;
@@ -48,5 +50,7 @@ typedef struct Particle {
 extern std::vector<Particle> particleSystem;
 extern void emitter();
 extern bool checkCollison(int index);
+
+extern int noAsteroids;
 
 #endif /* Particle_hpp */
